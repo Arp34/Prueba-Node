@@ -1,3 +1,4 @@
+// City entity model / Modelo de entidad Ciudad
 import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../config/database.js";
 

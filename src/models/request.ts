@@ -1,3 +1,5 @@
+// Request entity model representing supply orders placed by clinics to warehouses
+// Modelo de entidad Solicitud que representa pedidos de abastecimiento de clínicas a almacenes
 import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../config/database.js";
 import { Clinic } from "./clinic.js";
@@ -61,7 +63,7 @@ RequestModel.init(
         },
         estado: {
             type: DataTypes.STRING(20),
-            defaultValue: "Pendiente",
+            defaultValue: "Pending",
             allowNull: false
         }
     },

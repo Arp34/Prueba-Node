@@ -10,46 +10,46 @@ router.use(verifyToken);
  * @swagger
  * /api/medicines:
  *   get:
- *     summary: Listar todos los medicamentos
- *     tags: [Medicamentos]
+ *     summary: Retrieve all active medicines
+ *     tags: [Medicines]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Lista de medicamentos.
+ *         description: List of active medicines.
  *   post:
- *     summary: Crear un nuevo medicamento (Solo Administrador)
- *     tags: [Medicamentos]
+ *     summary: Create a new medicine (Admin only)
+ *     tags: [Medicines]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       201:
- *         description: Medicamento creado.
+ *         description: Medicine created successfully.
  */
 router.get("/", getMedicines);
-router.post("/", checkRole(["Administrador"]), createMedicine);
+router.post("/", checkRole(["Admin", "Administrator", "Administrador"]), createMedicine);
 
 /**
  * @swagger
  * /api/medicines/{id}:
  *   put:
- *     summary: Actualizar datos de un medicamento
- *     tags: [Medicamentos]
+ *     summary: Update medicine details (Admin only)
+ *     tags: [Medicines]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Medicamento actualizado.
+ *         description: Medicine updated successfully.
  *   delete:
- *     summary: Eliminación lógica de un medicamento
- *     tags: [Medicamentos]
+ *     summary: Soft delete a medicine (Admin only)
+ *     tags: [Medicines]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Medicamento inhabilitado.
+ *         description: Medicine deactivated successfully.
  */
-router.put("/:id", checkRole(["Administrador"]), updateMedicine);
-router.delete("/:id", checkRole(["Administrador"]), deleteMedicine);
+router.put("/:id", checkRole(["Admin", "Administrator", "Administrador"]), updateMedicine);
+router.delete("/:id", checkRole(["Admin", "Administrator", "Administrador"]), deleteMedicine);
 
 export default router;

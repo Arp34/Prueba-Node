@@ -8,7 +8,7 @@ const router = Router();
  * @swagger
  * /api/seeders/seed:
  *   post:
- *     summary: Poblar la base de datos mediante un archivo JSON
+ *     summary: Bulk seed database via uploaded JSON file
  *     tags: [Seeder]
  *     requestBody:
  *       required: true
@@ -20,10 +20,10 @@ const router = Router();
  *               file:
  *                 type: string
  *                 format: binary
- *                 description: Archivo data-seed.json
+ *                 description: data-seed.json file
  *     responses:
  *       200:
- *         description: Base de datos poblada exitosamente.
+ *         description: Database successfully seeded.
  */
 router.post("/seed", uploadJson.single("file"), seedDatabase);
 

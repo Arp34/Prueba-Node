@@ -1,64 +1,92 @@
 import { Request, Response } from "express";
 import { Warehouse } from "../models/warehouse.js";
 
+/**
+ * Controller to create a new warehouse.
+ * Controlador para crear un nuevo almacén.
+ */
 export const createWarehouse = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { nombre, direccion } = req.body;
-        if (!nombre || !direccion) {
-            res.status(400).json({ message: "Nombre y dirección son requeridos." });
+        const name = req.body.name || req.body.nombre;
+        const address = req.body.address || req.body.direccion;
+
+        if (!name || !address) {
+            res.status(400).json({ message: "Name and address are required." });
             return;
         }
 
-        const warehouse = await Warehouse.create({ nombre, direccion });
-        res.status(201).json({ message: "Almacén creado con éxito.", warehouse });
+        const warehouse = await Warehouse.create({
+            nombre: name,
+            direccion: address
+        });
+
+        res.status(201).json({ message: "Warehouse created successfully.", warehouse });
     } catch (error) {
-        console.error("Error al crear almacén:", error);
-        res.status(500).json({ message: "Error interno al crear el almacén." });
+        console.error("Error creating warehouse:", error);
+        res.status(500).json({ message: "Internal error creating warehouse." });
     }
 };
 
+/**
+ * Controller to retrieve all active warehouses.
+ * Controlador para obtener todos los almacenes activos.
+ */
 export const getWarehouses = async (_req: Request, res: Response): Promise<void> => {
     try {
         const warehouses = await Warehouse.findAll({ where: { estado: true } });
         res.status(200).json(warehouses);
     } catch (error) {
-        console.error("Error al obtener almacenes:", error);
-        res.status(500).json({ message: "Error al obtener los almacenes." });
+        console.error("Error retrieving warehouses:", error);
+        res.status(500).json({ message: "Error retrieving warehouses." });
     }
 };
 
+/**
+ * Controller to update warehouse details.
+ * Controlador para actualizar información de un almacén.
+ */
 export const updateWarehouse = async (req: Request, res: Response): Promise<void> => {
     try {
         const { id } = req.params;
         const warehouse = await Warehouse.findByPk(id as string);
 
         if (!warehouse || !warehouse.estado) {
-            res.status(404).json({ message: "Almacén no encontrado o inactivo." });
+            res.status(404).json({ message: "Warehouse not found or inactive." });
             return;
         }
 
-        await warehouse.update(req.body);
-        res.status(200).json({ message: "Almacén actualizado con éxito.", warehouse });
+        const updateData: any = {};
+        if (req.body.name || req.body.nombre) updateData.nombre = req.body.name || req.body.nombre;
+        if (req.body.address || req.body.direccion) updateData.direccion = req.body.address || req.body.direccion;
+
+        await warehouse.update(updateData);
+        res.status(200).json({ message: "Warehouse updated successfully.", warehouse });
     } catch (error) {
-        console.error("Error al actualizar almacén:", error);
-        res.status(500).json({ message: "Error al actualizar el almacén." });
+        console.error("Error updating warehouse:", error);
+        res.status(500).json({ message: "Error updating warehouse." });
     }
 };
 
+/**
+ * Controller to perform soft delete on warehouse.
+ * Controlador para realizar el borrado lógico de un almacén.
+ */
 export const deleteWarehouse = async (req: Request, res: Response): Promise<void> => {
     try {
         const { id } = req.params;
         const warehouse = await Warehouse.findByPk(id as string);
 
         if (!warehouse || !warehouse.estado) {
-            res.status(404).json({ message: "Almacén no encontrado o ya inactivo." });
+            res.status(404).json({ message: "Warehouse not found or already inactive." });
             return;
         }
 
+        // Soft Delete Logic - Disabling record by setting active status flag to false
+        // Lógica de Borrado Lógico - Desactiva el registro cambiando la bandera de estado activo a false
         await warehouse.update({ estado: false });
-        res.status(200).json({ message: "Almacén desactivado correctamente (borrado lógico)." });
+        res.status(200).json({ message: "Warehouse deactivated successfully (soft delete)." });
     } catch (error) {
-        console.error("Error al desactivar almacén:", error);
-        res.status(500).json({ message: "Error al eliminar el almacén." });
+        console.error("Error deactivating warehouse:", error);
+        res.status(500).json({ message: "Error deactivating warehouse." });
     }
 };

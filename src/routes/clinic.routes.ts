@@ -10,46 +10,46 @@ router.use(verifyToken);
  * @swagger
  * /api/clinics:
  *   get:
- *     summary: Listar todas las clínicas
- *     tags: [Clínicas]
+ *     summary: Retrieve all active clinics
+ *     tags: [Clinics]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Lista de clínicas registradas.
+ *         description: List of active clinics.
  *   post:
- *     summary: Crear nueva clínica (Solo Administrador)
- *     tags: [Clínicas]
+ *     summary: Create a new clinic (Admin only)
+ *     tags: [Clinics]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       201:
- *         description: Clínica creada.
+ *         description: Clinic created successfully.
  */
 router.get("/", getClinics);
-router.post("/", checkRole(["Administrador"]), createClinic);
+router.post("/", checkRole(["Admin", "Administrator", "Administrador"]), createClinic);
 
 /**
  * @swagger
  * /api/clinics/{id}:
  *   put:
- *     summary: Actualizar clínica
- *     tags: [Clínicas]
+ *     summary: Update clinic details (Admin only)
+ *     tags: [Clinics]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Clínica actualizada.
+ *         description: Clinic updated successfully.
  *   delete:
- *     summary: Eliminación lógica de clínica
- *     tags: [Clínicas]
+ *     summary: Soft delete a clinic (Admin only)
+ *     tags: [Clinics]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Clínica desactivada o eliminada lógicamente.
+ *         description: Clinic deactivated successfully.
  */
-router.put("/:id", checkRole(["Administrador"]), updateClinic);
-router.delete("/:id", checkRole(["Administrador"]), deleteClinic);
+router.put("/:id", checkRole(["Admin", "Administrator", "Administrador"]), updateClinic);
+router.delete("/:id", checkRole(["Admin", "Administrator", "Administrador"]), deleteClinic);
 
 export default router;

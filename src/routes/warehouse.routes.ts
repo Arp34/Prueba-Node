@@ -10,46 +10,46 @@ router.use(verifyToken);
  * @swagger
  * /api/warehouses:
  *   get:
- *     summary: Listar todos los almacenes
- *     tags: [Almacenes]
+ *     summary: Retrieve all active warehouses
+ *     tags: [Warehouses]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Lista de almacenes.
+ *         description: List of active warehouses.
  *   post:
- *     summary: Crear un nuevo almacén (Solo Administrador)
- *     tags: [Almacenes]
+ *     summary: Create a new warehouse (Admin only)
+ *     tags: [Warehouses]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       201:
- *         description: Almacén registrado.
+ *         description: Warehouse created successfully.
  */
 router.get("/", getWarehouses);
-router.post("/", checkRole(["Administrador"]), createWarehouse);
+router.post("/", checkRole(["Admin", "Administrator", "Administrador"]), createWarehouse);
 
 /**
  * @swagger
  * /api/warehouses/{id}:
  *   put:
- *     summary: Actualizar información de un almacén
- *     tags: [Almacenes]
+ *     summary: Update warehouse details (Admin only)
+ *     tags: [Warehouses]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Almacén actualizado.
+ *         description: Warehouse updated successfully.
  *   delete:
- *     summary: Eliminación lógica de un almacén
- *     tags: [Almacenes]
+ *     summary: Soft delete a warehouse (Admin only)
+ *     tags: [Warehouses]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Almacén desactivado.
+ *         description: Warehouse deactivated successfully.
  */
-router.put("/:id", checkRole(["Administrador"]), updateWarehouse);
-router.delete("/:id", checkRole(["Administrador"]), deleteWarehouse);
+router.put("/:id", checkRole(["Admin", "Administrator", "Administrador"]), updateWarehouse);
+router.delete("/:id", checkRole(["Admin", "Administrator", "Administrador"]), deleteWarehouse);
 
 export default router;

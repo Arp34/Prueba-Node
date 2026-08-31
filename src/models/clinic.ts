@@ -1,3 +1,5 @@
+// Clinic entity model representing medical facilities receiving supply requests
+// Modelo de entidad Clínica que representa los centros médicos que reciben solicitudes de abastecimiento
 import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../config/database.js";
 

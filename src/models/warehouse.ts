@@ -1,3 +1,5 @@
+// Warehouse entity model representing supply storage facilities
+// Modelo de entidad Almacén que representa las instalaciones de almacenamiento
 import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../config/database.js";
 

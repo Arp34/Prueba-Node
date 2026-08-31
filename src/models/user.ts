@@ -1,3 +1,5 @@
+// User entity model for authentication and role management
+// Modelo de entidad Usuario para autenticación y gestión de roles
 import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../config/database.js";
 
@@ -6,7 +8,7 @@ export interface UserAttributes {
     nombre: string;
     correo: string;
     contrasena: string;
-    rol: "Administrador" | "Gestor de Solicitudes";
+    rol: "Admin" | "Administrator" | "Request Manager" | "Administrador" | "Gestor de Solicitudes";
     estado?: boolean;
 }
 
@@ -17,7 +19,7 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
     declare nombre: string;
     declare correo: string;
     declare contrasena: string;
-    declare rol: "Administrador" | "Gestor de Solicitudes";
+    declare rol: "Admin" | "Administrator" | "Request Manager" | "Administrador" | "Gestor de Solicitudes";
     declare estado: boolean;
 }
 
@@ -42,7 +44,7 @@ User.init(
             allowNull: false
         },
         rol: {
-            type: DataTypes.ENUM("Administrador", "Gestor de Solicitudes"),
+            type: DataTypes.STRING(50),
             allowNull: false
         },
         estado: {

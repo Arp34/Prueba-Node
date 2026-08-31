@@ -1,5 +1,5 @@
-// CONFIGURACION REUTILIZABLE (NO TOCAR)
-// Configuracion de conexion de Sequelize para conectarse a la base de datos PostgreSQL
+// Database configuration using Sequelize to connect to PostgreSQL
+// Configuración de base de datos usando Sequelize para conectarse a PostgreSQL
 import { Sequelize } from "sequelize";
 import "dotenv/config";
 

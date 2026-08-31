@@ -1,3 +1,4 @@
+// Role entity model / Modelo de entidad Rol
 import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../config/database.js";
 

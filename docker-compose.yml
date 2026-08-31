@@ -1,16 +1,35 @@
+version: '3.8'
+
 services:
-  postgres:
-    image: postgres:16
-    container_name: postgres-template
-    restart: unless-stopped
+  db:
+    image: postgres:15-alpine
+    container_name: riwimedicare_db
+    restart: always
     environment:
       POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin123
+      POSTGRES_PASSWORD: adminpassword
       POSTGRES_DB: riwimedicare_db
     ports:
-      - "5434:5432"
+      - "5432:5432"
     volumes:
-      - postgres_template_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build: .
+    container_name: riwimedicare_api
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: admin
+      DB_PASSWORD: adminpassword
+      DB_NAME: riwimedicare_db
+      JWT_SECRET: super_secret_jwt_key
+    depends_on:
+      - db
 
 volumes:
-  postgres_template_data:
+  postgres_data:

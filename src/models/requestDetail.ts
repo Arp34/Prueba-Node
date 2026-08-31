@@ -1,3 +1,5 @@
+// RequestDetail model detailing requested items and quantities per order
+// Modelo DetalleSolicitud con el detalle de items y cantidades solicitadas por pedido
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../config/database.js";
 import { RequestModel } from "./request.js";

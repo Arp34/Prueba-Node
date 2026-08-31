@@ -1,12 +1,13 @@
-describe("Validaciones del Módulo de Solicitudes", () => {
-    test("Debe rechazar solicitudes con cantidades menores o iguales a cero", () => {
-        const cantidad = 0;
-        expect(cantidad).toBeLessThanOrEqual(0);
+// Supply Requests Module Business Validations / Validaciones de Negocio del Módulo de Solicitudes
+describe("Supply Requests Module Business Validations", () => {
+    test("Should reject requests with quantity less than or equal to zero / Debe rechazar solicitudes con cantidad <= 0", () => {
+        const quantity = 0;
+        expect(quantity).toBeLessThanOrEqual(0);
     });
 
-    test("Debe permitir únicamente los estados definidos por la lógica de negocio", () => {
-        const estadosValidos = ["Pending", "Approved", "Rejected", "Delivered"];
-        const estadoEntrante = "Approved";
-        expect(estadosValidos).toContain(estadoEntrante);
+    test("Should allow only valid status values defined by business logic / Debe permitir únicamente los estados válidos de negocio", () => {
+        const validStatuses = ["Pending", "Approved", "Rejected", "Delivered"];
+        const incomingStatus = "Approved";
+        expect(validStatuses).toContain(incomingStatus);
     });
 });

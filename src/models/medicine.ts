@@ -1,3 +1,5 @@
+// Medicine entity model representing pharmaceutical products
+// Modelo de entidad Medicamento que representa productos farmacéuticos
 import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../config/database.js";
 

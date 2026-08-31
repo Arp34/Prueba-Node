@@ -1,3 +1,5 @@
+// Inventory junction model tracking stock quantities of medicines across warehouses
+// Modelo pivote de Inventario para monitorear el stock de medicamentos por almacén
 import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../config/database.js";
 import { Warehouse } from "./warehouse.js";

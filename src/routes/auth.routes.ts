@@ -7,8 +7,8 @@ const router = Router();
  * @swagger
  * /api/auth/register:
  *   post:
- *     summary: Registrar un nuevo usuario (Sin restricción JWT)
- *     tags: [Autenticación]
+ *     summary: Register a new user
+ *     tags: [Authentication]
  *     requestBody:
  *       required: true
  *       content:
@@ -18,7 +18,8 @@ const router = Router();
  *             required:
  *               - email
  *               - password
- *               - role_id
+ *               - name
+ *               - role
  *             properties:
  *               name:
  *                 type: string
@@ -26,11 +27,16 @@ const router = Router();
  *                 type: string
  *               password:
  *                 type: string
- *               role_id:
+ *               role:
  *                 type: string
+ *                 example: Admin
  *     responses:
  *       201:
- *         description: Usuario registrado exitosamente.
+ *         description: User registered successfully.
+ *       400:
+ *         description: Missing required fields or validation error.
+ *       409:
+ *         description: Email already registered.
  */
 router.post("/register", register);
 
@@ -38,8 +44,8 @@ router.post("/register", register);
  * @swagger
  * /api/auth/login:
  *   post:
- *     summary: Iniciar sesión de usuario
- *     tags: [Autenticación]
+ *     summary: User login to retrieve JWT token
+ *     tags: [Authentication]
  *     requestBody:
  *       required: true
  *       content:
@@ -56,7 +62,9 @@ router.post("/register", register);
  *                 type: string
  *     responses:
  *       200:
- *         description: Login exitoso y entrega del Token JWT.
+ *         description: Login successful and JWT token delivered.
+ *       401:
+ *         description: Invalid credentials.
  */
 router.post("/login", login);
 

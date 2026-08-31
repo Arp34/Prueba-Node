@@ -1,90 +1,56 @@
-# API Template
+# RiwiMediCare Plus - Medical Supply & Inventory API
 
-Template base para el desarrollo de APIs utilizando Express, TypeScript, Sequelize y PostgreSQL.
+## Coder Information
+* Full Name: Axel David Ruiz Polo
+* Clan: Centurion
+* Module: Node.js
+* GitHub Repository: https://github.com/Arp34/Prueba-Node.git
 
-## Requisitos previos
+## Project Description
+RESTful API built with Node.js, Express, TypeScript, Sequelize ORM, and PostgreSQL to manage medical inventory, supply requests, clinics, warehouses, and users with Role-Based Access Control (RBAC).
 
-Para poder ejecutar este proyecto localmente, es necesario contar con las siguientes herramientas instaladas en el sistema:
+## Environment Variables (.env.example)
+PORT=3000
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=admin
+DB_PASSWORD=adminpassword
+DB_NAME=riwimedicare_db
+JWT_SECRET=super_secret_jwt_key
 
-* Node.js (Version 18 o superior recomendada)
-* Docker y Docker Compose
-* Git
+## Tech Stack
+* Node.js & Express (TypeScript)
+* Sequelize ORM & PostgreSQL
+* Docker & Docker Compose
+* Jest & Supertest
+* Swagger JSDoc & Swagger UI
+* Multer
 
-## Inicializacion rapida desde cero
+## Installation & Setup Instructions
+1. Clone the repository:
+   git clone https://github.com/Arp34/Prueba-Node.git
+   cd api-template
 
-Siga estos pasos de manera secuencial para configurar e iniciar el entorno de desarrollo:
-
-1. Clonar el repositorio del proyecto:
-   git clone <URL_DEL_REPOSITORIO>
-   cd "aBase de Proyectos Node"
-
-2. Instalar las dependencias del proyecto:
+2. Install dependencies:
    npm install
 
-3. Crear el archivo de variables de entorno copiando la plantilla de ejemplo:
-   cp .env.example .env
-
-4. Levantar la base de datos PostgreSQL utilizando Docker Compose:
+3. Run PostgreSQL using Docker Compose:
    docker compose up -d
 
-5. Iniciar la aplicacion en modo de desarrollo con recarga automatica:
+4. Start the server in development mode:
    npm run dev
 
-## Configuracion de puertos y resolucion de conflictos
+## Bulk JSON Seeder (Multer Endpoint)
+To populate the database using the provided JSON file, make a POST request:
+* Endpoint: POST http://localhost:3000/api/seeders/seed
+* Request Type: form-data
+* Key: file (Type: File)
+* Value: Attach the data-seed.json file located at the project root.
 
-El proyecto esta configurado para ejecutarse en los siguientes puertos de manera predeterminada:
+## Unit Testing & Coverage Report
+Run unit tests and generate the coverage report (minimum 40% threshold):
+npm test
 
-* API del servidor: Puerto 3000 (configurable mediante la variable PORT en el archivo .env).
-* Base de datos PostgreSQL en Docker: Puerto externo 5434 (mapeado al puerto interno 5432 del contenedor).
-
-### Conflicto de puertos en Docker
-Si el puerto 5434 ya esta ocupado por otra instancia local de PostgreSQL u otro servicio en su sistema, el contenedor fallara al iniciar. Para resolver esto:
-
-1. Abra el archivo docker-compose.yml.
-2. Modifique la seccion ports en el servicio postgres. Cambie el primer numero (puerto host) por uno libre, por ejemplo "5435:5432".
-3. Abra su archivo .env y actualice la variable DB_PORT con el nuevo puerto host (ejemplo: DB_PORT=5435).
-4. Reinicie el contenedor ejecutando:
-   docker compose down
-   docker compose up -d
-
-## Estructura de carpetas y creacion de nuevas entidades
-
-El proyecto sigue una arquitectura organizada y modular:
-
-* src/config: Archivos de configuracion (base de datos, documentacion de Swagger).
-* src/controllers: Logica de control que gestiona las peticiones HTTP y respuestas de la API.
-* src/middlewares: Funciones intermedias como la validacion de tokens JWT para proteger las rutas.
-* src/models: Definicion de los esquemas, relaciones y validaciones de los modelos de Sequelize.
-* src/routes: Mapeo de rutas y endpoints HTTP de la aplicacion.
-* src/seeds: Archivos para la insercion de datos iniciales en la base de datos.
-* src/types: Extensiones de tipos de TypeScript (por ejemplo, para extender la interfaz Request de Express).
-
-### Donde crear nuevas entidades para la prueba tecnica
-Para agregar una nueva tabla o recurso en la prueba:
-1. Crear el modelo en src/models/<entidad>.ts extendiendo de Model de Sequelize. Importar la conexion de base de datos desde ../config/database.js.
-2. Crear el controlador en src/controllers/<entidad>.controller.ts e implementar las funciones CRUD.
-3. Crear el enrutador en src/routes/<entidad>.routes.ts definiendo los endpoints (POST, GET, PUT, DELETE).
-4. Importar y registrar el nuevo enrutador en el archivo principal src/index.ts (ejemplo: app.use("/api/entidades", entidadRoutes)).
-
-## Sincronizacion de Base de Datos y Carga de Seeds
-
-### Sincronizacion con Sequelize
-El proyecto utiliza la sincronizacion automatica de Sequelize al levantar el servidor (sequelize.sync() dentro de src/index.ts).
-* Para actualizar las tablas segun los cambios realizados en los archivos de modelos en desarrollo, puede agregar temporalmente la opcion alter: true (ejemplo: await sequelize.sync({ alter: true })) dentro del archivo src/index.ts.
-* Nota: No use force: true en entornos de desarrollo avanzados a menos que desee borrar todos los datos existentes de las tablas en cada reinicio.
-
-### Cargar Seeds (Datos de Prueba)
-Para inicializar la base de datos con datos de prueba predefinidos (como un usuario administrador o registros iniciales), ejecute el siguiente comando:
-
-npm run seed
-
-Este comando ejecutara el script ubicado en src/seeds/seed.ts que insertara la informacion inicial en la base de datos PostgreSQL.
-
-## Guia de uso de la documentacion de la API (Swagger)
-
-La API cuenta con documentacion autogenerada e interactiva mediante Swagger.
-
-1. Asegurese de tener el servidor corriendo (npm run dev).
-2. Abra su navegador web y acceda a la siguiente URL:
-   http://localhost:3000/api-docs
-3. Desde esta interfaz podra visualizar todos los endpoints disponibles de la API (Auth, Examples, etc.), inspeccionar las estructuras de datos esperadas (schemas) y realizar peticiones directamente de prueba utilizando el boton "Try it out".
+## API Documentation (Swagger UI)
+Access the interactive Swagger UI documentation at:
+http://localhost:3000/api-docs
