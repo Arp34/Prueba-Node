@@ -1,0 +1,62 @@
+{
+  "users": [
+    {
+      "nombre": "Admin General",
+      "correo": "admin@riwimedicare.com",
+      "contrasena": "admin123",
+      "rol": "Administrador"
+    },
+    {
+      "nombre": "Gestor de Solicitudes 1",
+      "correo": "gestor@riwimedicare.com",
+      "contrasena": "gestor123",
+      "rol": "Gestor de Solicitudes"
+    }
+  ],
+  "clinics": [
+    {
+      "nombre": "Clínica Las Américas",
+      "nit": "900123456-1",
+      "direccion": "Calle 10 #45-20",
+      "telefono": "6041234567",
+      "responsable": "Dra. María Gómez"
+    },
+    {
+      "nombre": "Centro Médico San José",
+      "nit": "900987654-2",
+      "direccion": "Carrera 15 #30-12",
+      "telefono": "6049876543",
+      "responsable": "Dr. Carlos Pérez"
+    }
+  ],
+  "warehouses": [
+    {
+      "nombre": "Almacén Central Norte",
+      "direccion": "Zona Industrial Bodega 5"
+    },
+    {
+      "nombre": "Almacén Sur",
+      "direccion": "Av. Principal #80-10"
+    }
+  ],
+  "medicines": [
+    {
+      "codigo": "MED-001",
+      "nombre": "Acetaminofén 500mg",
+      "descripcion": "Analgésico y antipirético",
+      "precio": 1500.00
+    },
+    {
+      "codigo": "MED-002",
+      "nombre": "Amoxicilina 500mg",
+      "descripcion": "Antibiótico de amplio espectro",
+      "precio": 3200.00
+    },
+    {
+      "codigo": "MED-003",
+      "nombre": "Ibuprofeno 400mg",
+      "descripcion": "Antiinflamatorio no esteroideo",
+      "precio": 2100.00
+    }
+  ]
+}

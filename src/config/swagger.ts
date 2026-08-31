@@ -8,9 +8,9 @@ const options = {
     definition: {
         openapi: "3.0.0",
         info: {
-            title: "API Template",
+            title: "RiwiMediCare Plus API",
             version: "1.0.0",
-            description: "API base con Express, TypeScript, Sequelize y PostgreSQL"
+            description: "API RESTful para la gestión de abastecimiento de clínicas e inventario médico"
         },
         servers: [
             {
@@ -18,7 +18,8 @@ const options = {
             }
         ]
     },
+    // Esto hace que Swagger busque las anotaciones JSDoc dentro de src/routes/
     apis: ["./src/routes/*.ts", "./src/routes/*.js"]
 };
-
+// Genera las especificaciones Swagger
 export const swaggerSpec = swaggerJsdoc(options);

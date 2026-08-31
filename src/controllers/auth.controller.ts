@@ -1,32 +1,29 @@
-// CONFIGURACION REUTILIZABLE (NO TOCAR)
-// Controlador para la gestion de registro e inicio de sesion (login) utilizando JSON Web Tokens y bcrypt
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { User } from "../models/user.js";
 
-// CONFIGURACION REUTILIZABLE (NO TOCAR)
-// Funcion de login que valida las credenciales y genera el token de acceso
-export const login = async (req: Request, res: Response) => {
+// Función de Login adaptada al modelo en español
+export const login = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { email, password } = req.body;
+        const { correo, contrasena } = req.body;
 
-        if (!email || !password) {
+        if (!correo || !contrasena) {
             res.status(400).json({
-                message: "Email y contraseña son requeridos."
+                message: "Correo y contraseña son requeridos."
             });
             return;
         }
 
-        const user = await User.findOne({ where: { email } });
-        if (!user) {
+        const user = await User.findOne({ where: { correo } });
+        if (!user || !user.estado) {
             res.status(401).json({
-                message: "Credenciales incorrectas."
+                message: "Credenciales incorrectas o usuario inactivo."
             });
             return;
         }
 
-        const isMatch = await bcrypt.compare(password, user.password);
+        const isMatch = await bcrypt.compare(contrasena, user.contrasena);
         if (!isMatch) {
             res.status(401).json({
                 message: "Credenciales incorrectas."
@@ -36,7 +33,7 @@ export const login = async (req: Request, res: Response) => {
 
         const jwtSecret = process.env.JWT_SECRET || "default_super_secret_key";
         const token = jwt.sign(
-            { id: user.id, email: user.email },
+            { id: user.id_usuario, correo: user.correo, rol: user.rol },
             jwtSecret,
             { expiresIn: "24h" }
         );
@@ -45,8 +42,10 @@ export const login = async (req: Request, res: Response) => {
             message: "Inicio de sesión exitoso.",
             token,
             user: {
-                id: user.id,
-                email: user.email
+                id: user.id_usuario,
+                nombre: user.nombre,
+                correo: user.correo,
+                rol: user.rol
             }
         });
 
@@ -58,20 +57,19 @@ export const login = async (req: Request, res: Response) => {
     }
 };
 
-// MODIFICAR AQUI PARA EL PROYECTO REAL
-// Si el registro de usuario requiere mas informacion (nombre, rol, etc.), agregarlo aqui y mapearlo al modelo User
-export const register = async (req: Request, res: Response) => {
+// Función de Registro adaptada con Nombre, Correo, Contraseña y Rol
+export const register = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { email, password } = req.body;
+        const { nombre, correo, contrasena, rol } = req.body;
 
-        if (!email || !password) {
+        if (!nombre || !correo || !contrasena || !rol) {
             res.status(400).json({
-                message: "Email y contraseña son requeridos."
+                message: "Nombre, correo, contraseña y rol son requeridos."
             });
             return;
         }
 
-        const existingUser = await User.findOne({ where: { email } });
+        const existingUser = await User.findOne({ where: { correo } });
         if (existingUser) {
             res.status(409).json({
                 message: "El correo electrónico ya está registrado."
@@ -79,13 +77,23 @@ export const register = async (req: Request, res: Response) => {
             return;
         }
 
-        const newUser = await User.create({ email, password });
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(contrasena, salt);
+
+        const newUser = await User.create({ 
+            nombre, 
+            correo, 
+            contrasena: hashedPassword, 
+            rol 
+        });
 
         res.status(201).json({
             message: "Usuario registrado con éxito.",
             user: {
-                id: newUser.id,
-                email: newUser.email
+                id: newUser.id_usuario,
+                nombre: newUser.nombre,
+                correo: newUser.correo,
+                rol: newUser.rol
             }
         });
 

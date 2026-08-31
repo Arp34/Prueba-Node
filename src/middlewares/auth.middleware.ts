@@ -1,35 +1,47 @@
-// CONFIGURACION REUTILIZABLE (NO TOCAR)
-// Middleware de autenticacion para verificar la validez de los JSON Web Tokens (JWT) provistos en la cabecera Authorization
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-export interface TokenPayload {
-    id: string;
-    email: string;
+export interface CustomRequest extends Request {
+    user?: {
+        id: string;
+        correo: string;
+        rol: "Administrador" | "Gestor de Solicitudes";
+    };
 }
 
-export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
-    const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1];
+export const verifyToken = (req: CustomRequest, res: Response, next: NextFunction): void => {
+    const authHeader = req.headers.authorization;
 
-    if (!token) {
-        res.status(401).json({
-            message: "Acceso denegado. Token no proporcionado."
-        });
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        res.status(401).json({ message: "Acceso denegado. No se proporcionó token de autenticación." });
         return;
     }
 
-    try {
-        const jwtSecret = process.env.JWT_SECRET || "default_super_secret_key";
-        const decoded = jwt.verify(token, jwtSecret) as TokenPayload;
+    const token = authHeader.split(" ")[1];
 
-        // Adjuntar los datos decodificados al request
+    try {
+        const secret = process.env.JWT_SECRET || "default_super_secret_key";
+        const decoded = jwt.verify(token, secret) as any;
         req.user = decoded;
         next();
-
     } catch (error) {
-        res.status(403).json({
-            message: "Token inválido o expirado."
-        });
+        res.status(403).json({ message: "Token inválido o expirado." });
+        return;
     }
+};
+
+export const checkRole = (rolesPermitidos: Array<"Administrador" | "Gestor de Solicitudes">) => {
+    return (req: CustomRequest, res: Response, next: NextFunction): void => {
+        if (!req.user) {
+            res.status(401).json({ message: "Usuario no autenticado." });
+            return;
+        }
+
+        if (!rolesPermitidos.includes(req.user.rol)) {
+            res.status(403).json({ message: "Acceso denegado. No tienes permisos para realizar esta acción." });
+            return;
+        }
+
+        next();
+    };
 };
