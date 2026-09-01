@@ -50,3 +50,6 @@ To populate the database using the provided JSON file, make a POST request:
 ## API Documentation (Swagger UI)
 Access the interactive Swagger UI documentation at:
 http://localhost:3000/api-docs
+
+## GitHub Repository
+https://github.com/Arp34/Prueba-Node

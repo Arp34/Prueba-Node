@@ -88,22 +88,17 @@ export const updateClinic = async (req: Request, res: Response): Promise<void> =
  * Controller to perform a soft delete on a clinic record.
  * Controlador para realizar el borrado lógico en un registro de clínica.
  */
-export const deleteClinic = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const { id } = req.params;
-        const clinic = await Clinic.findByPk(id as string);
+export const deleteClinic = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const clinic = await Clinic.findByPk(id as string);
 
-        if (!clinic || !clinic.estado) {
-            res.status(404).json({ message: "Clinic not found or already inactive." });
-            return;
-        }
+  if (!clinic) {
+    return res.status(404).json({ message: "Clinic not found" });
+  }
 
-        // Technical Comment: Soft Delete Logic - Disabling record by setting active status flag to false
-        // Comentario Técnico: Lógica de Borrado Lógico - Desactiva el registro cambiando la bandera de estado activo a false
-        await clinic.update({ estado: false });
-        res.status(200).json({ message: "Clinic deactivated successfully (soft delete)." });
-    } catch (error) {
-        console.error("Error deactivating clinic:", error);
-        res.status(500).json({ message: "Error deactivating clinic." });
-    }
+  // Desactivación lógica
+  await clinic.update({ estado: false });
+  await clinic.destroy(); // Con paranoid: true, establece deletedAt automáticamente
+
+  return res.status(200).json({ message: "Clinic soft deleted successfully" });
 };

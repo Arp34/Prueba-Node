@@ -1,5 +1,4 @@
 // Clinic entity model representing medical facilities receiving supply requests
-// Modelo de entidad Clínica que representa los centros médicos que reciben solicitudes de abastecimiento
 import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../config/database.js";
 
@@ -11,6 +10,7 @@ export interface ClinicAttributes {
     telefono: string;
     responsable: string;
     estado?: boolean;
+    deletedAt?: Date;
 }
 
 export interface ClinicCreationAttributes extends Optional<ClinicAttributes, "id_clinica" | "estado"> {}
@@ -23,6 +23,7 @@ export class Clinic extends Model<ClinicAttributes, ClinicCreationAttributes> im
     declare telefono: string;
     declare responsable: string;
     declare estado: boolean;
+    declare deletedAt?: Date;
 }
 
 Clinic.init(
@@ -61,6 +62,7 @@ Clinic.init(
     {
         sequelize,
         tableName: "clinicas",
-        timestamps: false
+        timestamps: true,  // Habilita createdAt y updatedAt
+        paranoid: true     // Habilita el Soft Delete (crea la columna deletedAt automáticamente)
     }
 );
