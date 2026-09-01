@@ -12,7 +12,7 @@ RESTful API built with Node.js, Express, TypeScript, Sequelize ORM, and PostgreS
 ## Environment Variables (.env.example)
 PORT=3000
 DB_HOST=localhost
-DB_PORT=5432
+DB_PORT=5434
 DB_USER=admin
 DB_PASSWORD=adminpassword
 DB_NAME=riwimedicare_db
