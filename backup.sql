@@ -2,10 +2,10 @@
 -- PostgreSQL database dump
 --
 
-\restrict 9Zb9mrFDFezKLMh65qLGEFQ9ziYxO68kQGLEdC3O5Y8H7jhpRfuTTy7X5shcTcQ
+\restrict xpdjjwBh2aF60cA9gHDchnnnBePIqEWcO3FVpbXTGzY96lngupp5iomg21dzphh
 
--- Dumped from database version 16.15 (Debian 16.15-1.pgdg13+2)
--- Dumped by pg_dump version 16.15 (Debian 16.15-1.pgdg13+2)
+-- Dumped from database version 15.19
+-- Dumped by pg_dump version 15.19
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -18,18 +18,43 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
---
--- Name: enum_usuarios_rol; Type: TYPE; Schema: public; Owner: admin
---
-
-CREATE TYPE public.enum_usuarios_rol AS ENUM (
-    'Administrador',
-    'Gestor de Solicitudes'
-);
-
-
-ALTER TYPE public.enum_usuarios_rol OWNER TO admin;
-
+ALTER TABLE IF EXISTS ONLY public.solicitudes DROP CONSTRAINT IF EXISTS solicitudes_id_usuario_fkey;
+ALTER TABLE IF EXISTS ONLY public.solicitudes DROP CONSTRAINT IF EXISTS solicitudes_id_clinica_fkey;
+ALTER TABLE IF EXISTS ONLY public.solicitudes DROP CONSTRAINT IF EXISTS solicitudes_id_almacen_fkey;
+ALTER TABLE IF EXISTS ONLY public.inventarios DROP CONSTRAINT IF EXISTS inventarios_id_medicamento_fkey;
+ALTER TABLE IF EXISTS ONLY public.inventarios DROP CONSTRAINT IF EXISTS inventarios_id_almacen_fkey;
+ALTER TABLE IF EXISTS ONLY public.detalle_solicitudes DROP CONSTRAINT IF EXISTS detalle_solicitudes_id_solicitud_fkey;
+ALTER TABLE IF EXISTS ONLY public.detalle_solicitudes DROP CONSTRAINT IF EXISTS detalle_solicitudes_id_medicamento_fkey;
+ALTER TABLE IF EXISTS ONLY public.usuarios DROP CONSTRAINT IF EXISTS usuarios_pkey;
+ALTER TABLE IF EXISTS ONLY public.usuarios DROP CONSTRAINT IF EXISTS usuarios_correo_key3;
+ALTER TABLE IF EXISTS ONLY public.usuarios DROP CONSTRAINT IF EXISTS usuarios_correo_key2;
+ALTER TABLE IF EXISTS ONLY public.usuarios DROP CONSTRAINT IF EXISTS usuarios_correo_key1;
+ALTER TABLE IF EXISTS ONLY public.usuarios DROP CONSTRAINT IF EXISTS usuarios_correo_key;
+ALTER TABLE IF EXISTS ONLY public.solicitudes DROP CONSTRAINT IF EXISTS solicitudes_pkey;
+ALTER TABLE IF EXISTS ONLY public.roles DROP CONSTRAINT IF EXISTS roles_pkey;
+ALTER TABLE IF EXISTS ONLY public.medicamentos DROP CONSTRAINT IF EXISTS medicamentos_pkey;
+ALTER TABLE IF EXISTS ONLY public.medicamentos DROP CONSTRAINT IF EXISTS medicamentos_codigo_key3;
+ALTER TABLE IF EXISTS ONLY public.medicamentos DROP CONSTRAINT IF EXISTS medicamentos_codigo_key2;
+ALTER TABLE IF EXISTS ONLY public.medicamentos DROP CONSTRAINT IF EXISTS medicamentos_codigo_key1;
+ALTER TABLE IF EXISTS ONLY public.medicamentos DROP CONSTRAINT IF EXISTS medicamentos_codigo_key;
+ALTER TABLE IF EXISTS ONLY public.inventarios DROP CONSTRAINT IF EXISTS inventarios_pkey;
+ALTER TABLE IF EXISTS ONLY public.detalle_solicitudes DROP CONSTRAINT IF EXISTS detalle_solicitudes_pkey;
+ALTER TABLE IF EXISTS ONLY public.clinicas DROP CONSTRAINT IF EXISTS clinicas_pkey;
+ALTER TABLE IF EXISTS ONLY public.clinicas DROP CONSTRAINT IF EXISTS clinicas_nit_key3;
+ALTER TABLE IF EXISTS ONLY public.clinicas DROP CONSTRAINT IF EXISTS clinicas_nit_key2;
+ALTER TABLE IF EXISTS ONLY public.clinicas DROP CONSTRAINT IF EXISTS clinicas_nit_key1;
+ALTER TABLE IF EXISTS ONLY public.clinicas DROP CONSTRAINT IF EXISTS clinicas_nit_key;
+ALTER TABLE IF EXISTS ONLY public.ciudades DROP CONSTRAINT IF EXISTS ciudades_pkey;
+ALTER TABLE IF EXISTS ONLY public.almacenes DROP CONSTRAINT IF EXISTS almacenes_pkey;
+DROP TABLE IF EXISTS public.usuarios;
+DROP TABLE IF EXISTS public.solicitudes;
+DROP TABLE IF EXISTS public.roles;
+DROP TABLE IF EXISTS public.medicamentos;
+DROP TABLE IF EXISTS public.inventarios;
+DROP TABLE IF EXISTS public.detalle_solicitudes;
+DROP TABLE IF EXISTS public.clinicas;
+DROP TABLE IF EXISTS public.ciudades;
+DROP TABLE IF EXISTS public.almacenes;
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -71,7 +96,10 @@ CREATE TABLE public.clinicas (
     direccion character varying(150) NOT NULL,
     telefono character varying(20) NOT NULL,
     responsable character varying(100) NOT NULL,
-    estado boolean DEFAULT true
+    estado boolean DEFAULT true,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    "deletedAt" timestamp with time zone
 );
 
 
@@ -141,7 +169,7 @@ CREATE TABLE public.solicitudes (
     id_almacen uuid NOT NULL,
     id_usuario uuid NOT NULL,
     fecha_solicitud timestamp with time zone,
-    estado character varying(20) DEFAULT 'Pendiente'::character varying NOT NULL
+    estado character varying(20) DEFAULT 'Pending'::character varying NOT NULL
 );
 
 
@@ -156,7 +184,7 @@ CREATE TABLE public.usuarios (
     nombre character varying(100) NOT NULL,
     correo character varying(100) NOT NULL,
     contrasena character varying(255) NOT NULL,
-    rol public.enum_usuarios_rol NOT NULL,
+    rol character varying(50) NOT NULL,
     estado boolean DEFAULT true
 );
 
@@ -168,8 +196,8 @@ ALTER TABLE public.usuarios OWNER TO admin;
 --
 
 COPY public.almacenes (id_almacen, nombre, direccion, estado) FROM stdin;
-7851ee33-0fb6-49e4-a895-f096bf73cb27	Almacén Central Norte	Zona Industrial Bodega 5	t
-2d958155-a6f2-403c-b837-11be22a70beb	Almacén Sur	Av. Principal #80-10	t
+bf541a42-b2af-426f-b01a-8eda7f392efe	Almacén Central Norte	Zona Industrial Bodega 5	t
+f1adb244-5ee3-4fc9-9e11-10f52788b6dd	Almacén Sur	Av. Principal #80-10	t
 \.
 
 
@@ -185,9 +213,9 @@ COPY public.ciudades (id_ciudad, nombre) FROM stdin;
 -- Data for Name: clinicas; Type: TABLE DATA; Schema: public; Owner: admin
 --
 
-COPY public.clinicas (id_clinica, nombre, nit, direccion, telefono, responsable, estado) FROM stdin;
-8b44e820-8c6c-4230-82f7-2dedac317df3	Clínica Las Américas	900123456-1	Calle 10 #45-20	6041234567	Dra. María Gómez	t
-506bcf18-b1b3-4443-b023-3fab8196c5b7	Centro Médico San José	900987654-2	Carrera 15 #30-12	6049876543	Dr. Carlos Pérez	t
+COPY public.clinicas (id_clinica, nombre, nit, direccion, telefono, responsable, estado, "createdAt", "updatedAt", "deletedAt") FROM stdin;
+4273ab06-0703-439d-9f24-560ba87c82ae	Clínica Las Américas	900123456-1	Calle 10 #45-20	6041234567	Dra. María Gómez	t	2026-09-01 00:34:57.368+00	2026-09-01 00:34:57.368+00	\N
+70714f34-83b9-48e4-97f4-94f866d7966a	Centro Médico San José	900987654-2	Carrera 15 #30-12	6049876543	Dr. Carlos Pérez	t	2026-09-01 00:34:57.368+00	2026-09-01 00:34:57.368+00	\N
 \.
 
 
@@ -196,7 +224,6 @@ COPY public.clinicas (id_clinica, nombre, nit, direccion, telefono, responsable,
 --
 
 COPY public.detalle_solicitudes (id_solicitud, id_medicamento, cantidad) FROM stdin;
-dff0ea14-f5b5-436a-84d0-aa12c130ecb1	b6c6133c-11b2-4d3f-bdc0-9f2215930a8f	10
 \.
 
 
@@ -205,7 +232,6 @@ dff0ea14-f5b5-436a-84d0-aa12c130ecb1	b6c6133c-11b2-4d3f-bdc0-9f2215930a8f	10
 --
 
 COPY public.inventarios (id_almacen, id_medicamento, cantidad) FROM stdin;
-7851ee33-0fb6-49e4-a895-f096bf73cb27	b6c6133c-11b2-4d3f-bdc0-9f2215930a8f	90
 \.
 
 
@@ -214,9 +240,9 @@ COPY public.inventarios (id_almacen, id_medicamento, cantidad) FROM stdin;
 --
 
 COPY public.medicamentos (id_medicamento, codigo, nombre, descripcion, precio, estado) FROM stdin;
-b6c6133c-11b2-4d3f-bdc0-9f2215930a8f	MED-001	Acetaminofén 500mg	Analgésico y antipirético	1500.00	t
-ddd944e2-666a-403a-af70-9ea691fead1e	MED-002	Amoxicilina 500mg	Antibiótico de amplio espectro	3200.00	t
-67d2f3ae-8b72-423e-9c9e-1e08c2b12043	MED-003	Ibuprofeno 400mg	Antiinflamatorio no esteroideo	2100.00	t
+5a893dab-7599-4750-8d75-56d99c5e2aca	MED-001	Acetaminofén 500mg	Analgésico y antipirético	1500.00	t
+2895b841-797c-418a-af89-45c3569ad61b	MED-002	Amoxicilina 500mg	Antibiótico de amplio espectro	3200.00	t
+eb145897-5bfc-470a-a199-1b956c4fcf20	MED-003	Ibuprofeno 400mg	Antiinflamatorio no esteroideo	2100.00	t
 \.
 
 
@@ -233,7 +259,6 @@ COPY public.roles (id_rol, nombre) FROM stdin;
 --
 
 COPY public.solicitudes (id_solicitud, id_clinica, id_almacen, id_usuario, fecha_solicitud, estado) FROM stdin;
-dff0ea14-f5b5-436a-84d0-aa12c130ecb1	8b44e820-8c6c-4230-82f7-2dedac317df3	7851ee33-0fb6-49e4-a895-f096bf73cb27	45f10add-318c-477c-a980-8219ebb461ff	2026-08-31 21:23:11.939+00	Aprobada
 \.
 
 
@@ -242,8 +267,8 @@ dff0ea14-f5b5-436a-84d0-aa12c130ecb1	8b44e820-8c6c-4230-82f7-2dedac317df3	7851ee
 --
 
 COPY public.usuarios (id_usuario, nombre, correo, contrasena, rol, estado) FROM stdin;
-45f10add-318c-477c-a980-8219ebb461ff	Admin General	admin@riwimedicare.com	$2b$10$HEB4puKd.iClMpXA7YF3.uSvySX0ymANeUd347QsBS5Hgwz9uv3qO	Administrador	t
-fcdba790-6c3c-44e8-adc3-9bbe25ed7faa	Gestor de Solicitudes 1	gestor@riwimedicare.com	$2b$10$fdO7n.85Dgml9vjdc2qHCOX3usxKUToL9ESzb2K0Z4AhNqqsB.Vz2	Gestor de Solicitudes	t
+576d3562-ea25-4e1f-b81b-cb98deb289e9	Admin General	admin@riwimedicare.com	$2b$10$g5eK5WLlULgmnwYJNyWAf.jRXN4wev2T6GdFuXLJZxX88oMRcdpB.	Administrador	t
+d3f711d5-e1c7-4511-af64-806250e1316c	Gestor de Solicitudes 1	gestor@riwimedicare.com	$2b$10$H0wjnXomAo0q2ZOFbv.EsOVQaTGliDL44BsFH9X0TUyVBGYpad59S	Gestor de Solicitudes	t
 \.
 
 
@@ -269,6 +294,30 @@ ALTER TABLE ONLY public.ciudades
 
 ALTER TABLE ONLY public.clinicas
     ADD CONSTRAINT clinicas_nit_key UNIQUE (nit);
+
+
+--
+-- Name: clinicas clinicas_nit_key1; Type: CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.clinicas
+    ADD CONSTRAINT clinicas_nit_key1 UNIQUE (nit);
+
+
+--
+-- Name: clinicas clinicas_nit_key2; Type: CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.clinicas
+    ADD CONSTRAINT clinicas_nit_key2 UNIQUE (nit);
+
+
+--
+-- Name: clinicas clinicas_nit_key3; Type: CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.clinicas
+    ADD CONSTRAINT clinicas_nit_key3 UNIQUE (nit);
 
 
 --
@@ -304,6 +353,30 @@ ALTER TABLE ONLY public.medicamentos
 
 
 --
+-- Name: medicamentos medicamentos_codigo_key1; Type: CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.medicamentos
+    ADD CONSTRAINT medicamentos_codigo_key1 UNIQUE (codigo);
+
+
+--
+-- Name: medicamentos medicamentos_codigo_key2; Type: CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.medicamentos
+    ADD CONSTRAINT medicamentos_codigo_key2 UNIQUE (codigo);
+
+
+--
+-- Name: medicamentos medicamentos_codigo_key3; Type: CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.medicamentos
+    ADD CONSTRAINT medicamentos_codigo_key3 UNIQUE (codigo);
+
+
+--
 -- Name: medicamentos medicamentos_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -333,6 +406,30 @@ ALTER TABLE ONLY public.solicitudes
 
 ALTER TABLE ONLY public.usuarios
     ADD CONSTRAINT usuarios_correo_key UNIQUE (correo);
+
+
+--
+-- Name: usuarios usuarios_correo_key1; Type: CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.usuarios
+    ADD CONSTRAINT usuarios_correo_key1 UNIQUE (correo);
+
+
+--
+-- Name: usuarios usuarios_correo_key2; Type: CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.usuarios
+    ADD CONSTRAINT usuarios_correo_key2 UNIQUE (correo);
+
+
+--
+-- Name: usuarios usuarios_correo_key3; Type: CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.usuarios
+    ADD CONSTRAINT usuarios_correo_key3 UNIQUE (correo);
 
 
 --
@@ -403,5 +500,5 @@ ALTER TABLE ONLY public.solicitudes
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 9Zb9mrFDFezKLMh65qLGEFQ9ziYxO68kQGLEdC3O5Y8H7jhpRfuTTy7X5shcTcQ
+\unrestrict xpdjjwBh2aF60cA9gHDchnnnBePIqEWcO3FVpbXTGzY96lngupp5iomg21dzphh
 
